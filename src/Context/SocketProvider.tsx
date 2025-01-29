@@ -12,7 +12,7 @@ interface Player {
   position: [number, number, number];
   rotation: number;
 }
-export const socket = io("http://localhost:3001");
+export const socket = io(import.meta.env.VITE_SOCKET_SERVER);
 export const SocketContext = createContext<{
   players: Player[];
   id: string;
