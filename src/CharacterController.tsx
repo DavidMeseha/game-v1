@@ -65,6 +65,7 @@ export const CharacterController = () => {
   const rb = useRef<RapierRigidBody>(null);
   const container = useRef<Group<Object3DEventMap>>(null);
   const character = useRef<Group<Object3DEventMap>>(null);
+  const v3 = useRef(new Vector3());
 
   const characterRotationTarget = useRef(0);
   const rotationTarget = useRef(0);
@@ -205,13 +206,11 @@ export const CharacterController = () => {
       camera.lookAt(cameraLookAt.current);
     }
 
-    if (upPressed || downPressed || rightPressed || leftPressed) {
+    container.current.getWorldPosition(v3.current);
+
+    if (upPressed || downPressed || rightPressed || leftPressed || isClicking) {
       socket.emit("move", {
-        position: [
-          cameraWorldPosition.current.x,
-          0,
-          cameraWorldPosition.current.z + (CAMERA_TYPE ?? 3),
-        ],
+        position: [v3.current.x, v3.current.y, v3.current.z],
         rotation: container.current.rotation.y,
       });
     }

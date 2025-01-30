@@ -13,7 +13,7 @@ interface Player {
   rotation: number;
 }
 export const socket = io(import.meta.env.VITE_SOCKET_SERVER);
-export const SocketContext = createContext<{
+const SocketContext = createContext<{
   players: Player[];
   id: string;
 }>({
