@@ -210,8 +210,9 @@ export const CharacterController = () => {
       camera.lookAt(cameraLookAt.current);
     }
 
+    container.current.getWorldPosition(v3.current);
+
     if (upPressed || downPressed || rightPressed || leftPressed) {
-      // container.current.getWorldPosition(v3.current);
       socket.emit("move", {
         position: [v3.current.x, v3.current.y, v3.current.z],
         rotation: container.current.rotation.y,
