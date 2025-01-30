@@ -15,8 +15,6 @@ export default function OtherPlayer({ position, rotation }: Props) {
   const character = useRef<Group<Object3DEventMap>>(null);
   const v3 = useRef(new Vector3());
 
-  console.log(rotation, player.current?.rotation.y);
-
   useFrame(() => {
     if (!player.current || !character.current) return;
     v3.current.x = position[0];
