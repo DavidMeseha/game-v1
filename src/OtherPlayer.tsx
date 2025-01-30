@@ -2,7 +2,7 @@ import { RigidBody } from "@react-three/rapier";
 import { CharacterGroup } from "./CharacterController";
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Group, Object3DEventMap} from "three";
+import { Group, MathUtils, Object3DEventMap } from "three";
 import { Vector3 } from "three";
 
 type Props = {
@@ -21,7 +21,11 @@ export default function OtherPlayer({ position, rotation }: Props) {
     v3.current.y = position[1];
     v3.current.z = position[2];
     player.current.position.lerp(v3.current, 0.1);
-    character.current.rotation.y = rotation;
+    character.current.rotation.y = MathUtils.lerp(
+      character.current.rotation.y,
+      rotation,
+      0.1
+    );
     // character.current.rotation.y = MathUtils.lerp(
     //   player.current.rotation.y,
     //   rotation,
