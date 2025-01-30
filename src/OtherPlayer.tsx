@@ -1,4 +1,3 @@
-import { RigidBody } from "@react-three/rapier";
 import { CharacterGroup } from "./CharacterController";
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
@@ -26,19 +25,11 @@ export default function OtherPlayer({ position, rotation }: Props) {
       rotation,
       0.1
     );
-    // character.current.rotation.y = MathUtils.lerp(
-    //   player.current.rotation.y,
-    //   rotation,
-    //   0.1
-    // );
-    // player.current.position.set(v3.current.x, v3.current.y, v3.current.z);
   });
 
   return (
     <group ref={player}>
-      <RigidBody colliders="cuboid" lockRotations type="fixed">
-        <CharacterGroup ref={character} color="green" />
-      </RigidBody>
+      <CharacterGroup ref={character} color="green" />
     </group>
   );
 }
