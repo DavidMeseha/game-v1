@@ -171,18 +171,22 @@ export const CharacterController = () => {
 
     if (movement.x !== 0 || movement.z !== 0) {
       characterRotationTarget.current = Math.atan2(movement.x, movement.z);
-      vel.x =
-        Math.sin(rotationTarget.current + characterRotationTarget.current) *
-        speed;
-      vel.z =
-        Math.cos(rotationTarget.current + characterRotationTarget.current) *
-        speed;
+
+      character.current.rotation.y = lerpAngle(
+        character.current.rotation.y,
+        characterRotationTarget.current,
+        0.1
+      );
+
+      if (movement.z !== 0) {
+        vel.x =
+          Math.sin(rotationTarget.current + characterRotationTarget.current) *
+          speed;
+        vel.z =
+          Math.cos(rotationTarget.current + characterRotationTarget.current) *
+          speed;
+      }
     }
-    character.current.rotation.y = lerpAngle(
-      character.current.rotation.y,
-      characterRotationTarget.current,
-      0.1
-    );
 
     rb.current.setLinvel(vel, true);
 
@@ -206,9 +210,8 @@ export const CharacterController = () => {
       camera.lookAt(cameraLookAt.current);
     }
 
-    container.current.getWorldPosition(v3.current);
-
-    if (upPressed || downPressed || rightPressed || leftPressed || isClicking) {
+    if (upPressed || downPressed || rightPressed || leftPressed) {
+      // container.current.getWorldPosition(v3.current);
       socket.emit("move", {
         position: [v3.current.x, v3.current.y, v3.current.z],
         rotation: container.current.rotation.y,

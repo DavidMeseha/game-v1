@@ -28,7 +28,7 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
     socket.on("connect", () => {});
     socket.on("id", (id) => setId(id));
     socket.on("players", (props: Player[]) => {
-      setPlayers(props);
+      setPlayers(props.filter((player) => player.id !== id));
     });
   }, []);
 
