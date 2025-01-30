@@ -212,7 +212,7 @@ export const CharacterController = () => {
 
     container.current.getWorldPosition(v3.current);
 
-    if (upPressed || downPressed || rightPressed || leftPressed) {
+    if (upPressed || downPressed || rightPressed || leftPressed || isClicking) {
       socket.emit("move", {
         position: [v3.current.x, v3.current.y, v3.current.z],
         rotation: container.current.rotation.y,
