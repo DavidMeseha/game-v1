@@ -1,14 +1,14 @@
 import { useGLTF } from "@react-three/drei";
 import { RigidBody } from "@react-three/rapier";
-import { CharacterController } from "./CharacterController";
-import { UseSocket } from "./Context/SocketProvider";
-import OtherPlayer from "./OtherPlayer";
+import { CharacterController } from "./components/CharacterController";
+import { useSocket } from "./Context/SocketProvider";
+import OtherPlayer from "./components/OtherPlayer";
 
 useGLTF.preload("./non.glb");
 
 function App() {
   const obj = useGLTF("./non.glb");
-  const { players, id } = UseSocket();
+  const { players, id } = useSocket();
 
   return (
     <>

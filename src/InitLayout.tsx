@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useMemo, useRef } from "react";
+import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import {
   Environment,
@@ -8,9 +8,13 @@ import {
 import { Controls } from "./constants";
 import { Physics } from "@react-three/rapier";
 import SocketProvider from "./Context/SocketProvider";
+import TouchControls from "./components/TouchControls";
+import { ControlsProvider } from "./Context/ControlsProvider";
+import ControlsInstructions from "./components/ControlsInstructions";
 
 function InitLayout({ children }: { children: ReactNode }) {
   const canvasRef = useRef<HTMLDivElement>(null);
+  const [isTouchDevice] = useState("ontouchstart" in window);
 
   const map = useMemo(
     () => [
@@ -18,10 +22,6 @@ function InitLayout({ children }: { children: ReactNode }) {
       { name: Controls.down, keys: ["KeyS", "ArrowDown"] },
       { name: Controls.left, keys: ["KeyA", "ArrowLeft"] },
       { name: Controls.right, keys: ["KeyD", "ArrowRight"] },
-      { name: Controls.slow, keys: ["Shift"] },
-      { name: Controls.shoot, keys: ["KeyE", "Click"] },
-      { name: Controls.reset, keys: ["KeyR"] },
-      { name: Controls.escape, keys: ["Escape"] },
       { name: Controls.jump, keys: ["Space"] },
     ],
     []
@@ -45,13 +45,20 @@ function InitLayout({ children }: { children: ReactNode }) {
   return (
     <div ref={canvasRef} style={{ width: "100vw", height: "100vh" }}>
       <SocketProvider>
-        <Canvas>
-          <Environment preset="sunset" />
-          {/* <OrbitControls /> */}
-          <Physics gravity={[0, -90, 0]} timeStep="vary">
-            <KeyboardControls map={map}>{children}</KeyboardControls>
-          </Physics>
-        </Canvas>
+        <KeyboardControls map={map}>
+          <ControlsProvider>
+            <ControlsInstructions />
+            {isTouchDevice && <TouchControls />}
+
+            <Canvas>
+              <Environment preset="sunset" />
+              {/* <OrbitControls /> */}
+              <Physics gravity={[0, -90, 0]} timeStep="vary">
+                {children}
+              </Physics>
+            </Canvas>
+          </ControlsProvider>
+        </KeyboardControls>
       </SocketProvider>
     </div>
   );
