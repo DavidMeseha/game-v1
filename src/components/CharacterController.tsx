@@ -154,13 +154,13 @@ export const CharacterController = () => {
       vectors.current.v3.z,
     ];
 
-    coins.forEach((coin) => {
+    coins.forEach((coin, idx) => {
       if (
         Math.abs(coin[0] - position[0]) < 5 &&
         Math.abs(coin[2] - position[2]) < 5
       ) {
         console.log("Coin picked:", coin);
-        handleCoinPick(coin);
+        handleCoinPick(coin, idx);
       }
     });
 

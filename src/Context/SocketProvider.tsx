@@ -26,7 +26,7 @@ interface SocketContextType {
   handleRoomCancel: () => void;
   handleStartGame: () => void;
   handleLeaveRoom: () => void;
-  handleCoinPick: (coinPosition: [number, number, number]) => void;
+  handleCoinPick: (coinPosition: [number, number, number], idx: number) => void;
   clearError: () => void;
   error: IOError;
 }
@@ -37,7 +37,7 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
   const [socket, setSocket] = useState<Socket | undefined>();
   const [players, setPlayers] = useState<Player[]>([]);
   const [id, setId] = useState<string>("");
-  const { setCoins } = useCoins();
+  const { setCoins, handlePickCoin } = useCoins();
   const [error, setError] = useState<IOError>();
   const { setRoom, setMainMenuState, setGameState, setPlayersCount } =
     useGameStates();
@@ -81,8 +81,12 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
 
   const clearError = () => setError(null);
 
-  const handleCoinPick = (coinPosition: [number, number, number]) => {
+  const handleCoinPick = (
+    coinPosition: [number, number, number],
+    idx: number
+  ) => {
     if (!socket) return;
+    handlePickCoin(idx);
     socket.emit("coinPicked", { coinPosition }); // Replace with actual coin position
   };
 
