@@ -6,9 +6,14 @@ import { CharacterGroup } from "./CharacterGroup";
 interface OtherPlayerProps {
   position: [number, number, number];
   rotation: number;
+  name: string;
 }
 
-export default function OtherPlayer({ position, rotation }: OtherPlayerProps) {
+export default function OtherPlayer({
+  position,
+  rotation,
+  name,
+}: OtherPlayerProps) {
   const playerRef = useRef<Group>(null);
   const characterRef = useRef<Group>(null);
   const targetPosition = useRef(new Vector3());
@@ -30,7 +35,7 @@ export default function OtherPlayer({ position, rotation }: OtherPlayerProps) {
 
   return (
     <group ref={playerRef}>
-      <CharacterGroup ref={characterRef} color="green" />
+      <CharacterGroup ref={characterRef} name={name} color="green" />
     </group>
   );
 }

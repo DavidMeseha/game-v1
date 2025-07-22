@@ -5,7 +5,7 @@ export const useGameControls = () => {
   const { WALK_SPEED, ROTATION_SPEED, CAMERA_TYPE } = useControls(
     "Character Control",
     {
-      WALK_SPEED: { value: 10, min: 10, max: 20, step: 1 },
+      WALK_SPEED: { value: 25, min: 10, max: 25, step: 5 },
       ROTATION_SPEED: {
         value: degToRad(1),
         min: degToRad(1),

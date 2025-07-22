@@ -1,12 +1,188 @@
+/* Define your font faces */
+@font-face {
+  font-family: "Pixelate";
+  src: url("./assets/fonts/SF Pixelate.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pixelate";
+  src: url("./assets/fonts/SF Pixelate Bold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
 body {
   margin: 0;
   display: flex;
   place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  height: 100vh;
+  background-color: brown;
+  font-family: Pixelate;
+  font-weight: 600;
+  font-size: x-large;
+}
+
+p,
+h1,
+h3 {
+  margin: 0;
+  padding: 0;
+}
+
+button {
+  background: var(--call-to-action);
+  color: var(--call-to-action-foreground);
+  padding: 5px 10px;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
 }
 
 body,
 html {
   overflow: hidden;
+}
+
+:root {
+  --primary: blue;
+  --primary-foreground: white;
+  --background: white;
+  --foreground: black;
+  --call-to-action: yellow;
+  --destructive: red;
+  --call-to-action-foreground: black;
+
+  --gap: 20px;
+  --border-width: 10px;
+}
+
+input {
+  font-size: large;
+  font-family: inherit;
+  font-weight: inherit;
+  border-radius: 90px;
+  padding: 10px var(--gap);
+}
+
+.initial-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  z-index: 10;
+  padding: 0 var(--gap);
+  text-align: center;
+}
+
+.initial-menu {
+  background-color: var(--primary);
+  width: 100%;
+  max-width: 500px;
+  padding: var(--gap);
+  border: var(--border-width) solid transparent;
+  border-inline-color: rgb(0, 0, 187);
+  border-block-color: rgb(0, 0, 148);
+}
+
+.menu-options {
+  display: flex;
+  gap: 25px;
+}
+
+.menu-options button {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: var(--primary-foreground);
+  padding: 25px 0;
+  background-color: var(--primary);
+}
+
+.menu-options button:hover {
+  background-color: rgb(0, 0, 201);
+}
+
+.score-board {
+  position: fixed;
+  bottom: var(--gap);
+  right: var(--gap);
+  font-size: x-small;
+  z-index: 99;
+  background-color: var(--foreground);
+  color: var(--primary-foreground);
+  padding: 5px 10px;
+  opacity: 0.4;
+}
+
+.score-board .item {
+  display: flex;
+  gap: 50px;
+  padding: 5px 0;
+}
+
+.error-text {
+  color: var(--destructive);
+  font-size: medium;
+  height: 25px;
+  margin-top: 20px;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.block {
+  display: block;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.w-auto {
+  width: auto;
+}
+
+.flex {
+  display: flex;
+}
+
+.mt-1 {
+  margin-top: 20px;
+}
+
+.me-1 {
+  margin-inline-end: 20px;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.text-center {
+  text-align: center;
+}
+
+@media (max-width: 420px) {
+  .initial-menu {
+    padding: 10px;
+    font-size: medium;
+  }
 }

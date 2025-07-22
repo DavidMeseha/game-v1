@@ -6,9 +6,13 @@ import {
   useState,
 } from "react";
 import { io, Socket } from "socket.io-client";
+import { IOError } from "../types";
+import { useGameStates } from "./GameStatesProvider";
+import { useCoins } from "./CoinsProvider";
 
 interface Player {
   id: string;
+  coins: number;
   position: [number, number, number];
   rotation: number;
 }
@@ -16,36 +20,114 @@ interface Player {
 interface SocketContextType {
   players: Player[];
   id: string;
-  socket: Socket | null;
+  socket: Socket | undefined;
+  handleCreateRoom: () => void;
+  handleJoinRoom: (roomName: string) => void;
+  handleRoomCancel: () => void;
+  handleStartGame: () => void;
+  handleLeaveRoom: () => void;
+  handleCoinPick: (coinPosition: [number, number, number]) => void;
+  clearError: () => void;
+  error: IOError;
 }
 
-const SocketContext = createContext<SocketContextType>({
-  players: [],
-  id: "",
-  socket: null,
-});
+const SocketContext = createContext<SocketContextType | undefined>(undefined);
 
 export default function SocketProvider({ children }: { children: ReactNode }) {
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const [socket, setSocket] = useState<Socket | undefined>();
   const [players, setPlayers] = useState<Player[]>([]);
   const [id, setId] = useState<string>("");
+  const { setCoins } = useCoins();
+  const [error, setError] = useState<IOError>();
+  const { setRoom, setMainMenuState, setGameState, setPlayersCount } =
+    useGameStates();
+
+  const handleCreateRoom = () => {
+    if (!socket) return;
+    socket.emit("createRoom");
+    setMainMenuState("create");
+    clearError();
+    setPlayersCount(1);
+  };
+
+  const handleJoinRoom = (roomName: string) => {
+    if (!socket) return;
+    socket.emit("joinRoom", roomName);
+    setMainMenuState("waiting");
+    clearError();
+  };
+
+  const handleRoomCancel = () => {
+    if (!socket) return;
+    socket.emit("cancelRoom");
+    setMainMenuState("main");
+    setRoom(null);
+    clearError();
+    setPlayersCount(1);
+  };
+
+  const handleStartGame = () => {
+    if (!socket) return;
+    socket.emit("start");
+  };
+
+  const handleLeaveRoom = () => {
+    if (!socket) return;
+    socket.emit("leaveRoom");
+    setGameState("prepering");
+    setMainMenuState("main");
+    clearError();
+  };
+
+  const clearError = () => setError(null);
+
+  const handleCoinPick = (coinPosition: [number, number, number]) => {
+    if (!socket) return;
+    socket.emit("coinPicked", { coinPosition }); // Replace with actual coin position
+  };
 
   useEffect(() => {
     const newSocket = io(import.meta.env.VITE_SOCKET_SERVER);
     setSocket(newSocket);
 
-    const handleConnect = () => {
-      console.log("Connected to server");
-    };
-    const handleId = (id: string) => setId(id);
-    const handlePlayers = (props: Player[]) => setPlayers(props);
+    newSocket.on("connect_error", () => {
+      setError("Connection error");
+      setGameState("prepering");
+      setMainMenuState("main");
+    });
 
-    newSocket.on("connect", handleConnect);
+    newSocket.on("connect", () => {
+      setError(null);
+      console.log("Connected to server");
+    });
+
+    const handleId = (id: string) => setId(id);
+    const handlePlayers = (props: Player[]) => {
+      setPlayers(props);
+      console.log(players);
+    };
+    const handleCreatedRoom = (id: string) => setRoom(id);
+
+    newSocket.on("coins", (coins: [number, number, number][]) => {
+      setCoins(coins);
+    });
+    newSocket.on("connect", () => {});
+    newSocket.on("error", (err: string) => setError(err));
     newSocket.on("id", handleId);
     newSocket.on("players", handlePlayers);
+    newSocket.on("created", handleCreatedRoom);
+    newSocket.on("started", () => setGameState("playing"));
+    newSocket.on("roomDisconnected", () => {
+      setRoom(null);
+      setError("Room disconnected");
+      setMainMenuState("main");
+    });
+    newSocket.on("playersCount", (count) => {
+      setPlayersCount(count);
+    });
 
     return () => {
-      newSocket.off("connect", handleConnect);
+      newSocket.off("connect", () => {});
       newSocket.off("id", handleId);
       newSocket.off("players", handlePlayers);
       newSocket.close();
@@ -53,7 +135,21 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <SocketContext.Provider value={{ players, id, socket }}>
+    <SocketContext.Provider
+      value={{
+        players,
+        id,
+        socket,
+        handleCreateRoom,
+        handleJoinRoom,
+        handleRoomCancel,
+        handleStartGame,
+        handleLeaveRoom,
+        handleCoinPick,
+        clearError,
+        error,
+      }}
+    >
       {children}
     </SocketContext.Provider>
   );

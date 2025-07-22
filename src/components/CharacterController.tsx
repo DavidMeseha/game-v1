@@ -13,6 +13,7 @@ import { lerpAngle } from "../utils/characterUtils";
 import * as THREE from "three";
 import { useSocket } from "../Context/SocketProvider";
 import { useControls } from "../Context/ControlsProvider";
+import { useCoins } from "../Context/CoinsProvider";
 
 export interface CharacterMovement {
   x: number;
@@ -20,9 +21,10 @@ export interface CharacterMovement {
 }
 
 export const CharacterController = () => {
-  const { socket } = useSocket();
+  const { socket, handleCoinPick } = useSocket();
   const { WALK_SPEED, ROTATION_SPEED, CAMERA_TYPE } = useGameControls();
   const { controls } = useControls();
+  const { coins } = useCoins();
 
   const rb = useRef<RapierRigidBody>(null);
   const container = useRef<THREE.Group>(null);
@@ -41,27 +43,6 @@ export const CharacterController = () => {
   const isClicking = useRef(false);
   const velocity = useRef(5);
   const [isJumping, setIsJumping] = useState(false);
-
-  useEffect(() => {
-    const handleMouseEvents = (value: boolean) => () => {
-      isClicking.current = value;
-    };
-
-    const events = [
-      ["mousedown", true],
-      ["mouseup", false],
-    ] as const;
-
-    events.forEach(([event, value]) => {
-      document.addEventListener(event, handleMouseEvents(value));
-    });
-
-    return () => {
-      events.forEach(([event, value]) => {
-        document.removeEventListener(event, handleMouseEvents(value));
-      });
-    };
-  }, []);
 
   useEffect(() => {
     const handleJump = (e: KeyboardEvent) => {
@@ -167,6 +148,22 @@ export const CharacterController = () => {
       camera.lookAt(vectors.current.cameraLookAt);
     }
 
+    const position = [
+      vectors.current.v3.x,
+      vectors.current.v3.y,
+      vectors.current.v3.z,
+    ];
+
+    coins.forEach((coin) => {
+      if (
+        Math.abs(coin[0] - position[0]) < 5 &&
+        Math.abs(coin[2] - position[2]) < 5
+      ) {
+        console.log("Coin picked:", coin);
+        handleCoinPick(coin);
+      }
+    });
+
     // Emit position updates
     if (!socket) return;
     if (
@@ -179,11 +176,7 @@ export const CharacterController = () => {
     ) {
       container.current.getWorldPosition(vectors.current.v3);
       socket.emit("move", {
-        position: [
-          vectors.current.v3.x,
-          vectors.current.v3.y,
-          vectors.current.v3.z,
-        ],
+        position,
         rotation: container.current.rotation.y,
       });
     }
