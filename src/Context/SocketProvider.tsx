@@ -15,14 +15,15 @@ interface Player {
   coins: number;
   position: [number, number, number];
   rotation: number;
+  isSpectator: boolean;
 }
 
 interface SocketContextType {
   players: Player[];
   id: string;
   socket: Socket | undefined;
-  handleCreateRoom: () => void;
-  handleJoinRoom: (roomName: string) => void;
+  handleCreateRoom: (isSpectator: boolean) => void;
+  handleJoinRoom: (roomName: string, isSpectator: boolean) => void;
   handleRoomCancel: () => void;
   handleStartGame: () => void;
   handleLeaveRoom: () => void;
@@ -37,22 +38,25 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
   const [socket, setSocket] = useState<Socket | undefined>();
   const [players, setPlayers] = useState<Player[]>([]);
   const [id, setId] = useState<string>("");
-  const { setCoins, handlePickCoin } = useCoins();
+  const { setCoins, removeCoin } = useCoins();
   const [error, setError] = useState<IOError>();
-  const { setRoom, setMainMenuState, setGameState, setPlayersCount } =
-    useGameStates();
+  const {
+    setRoom,
+    setMainMenuState,
+    setGameState,
+    setPlayersCount,
+    setIsSpectator,
+  } = useGameStates();
 
-  const handleCreateRoom = () => {
+  const handleCreateRoom = (isSpectator: boolean) => {
     if (!socket) return;
-    socket.emit("createRoom");
-    setMainMenuState("create");
+    socket.emit("createRoom", { isSpectator });
     clearError();
-    setPlayersCount(1);
   };
 
-  const handleJoinRoom = (roomName: string) => {
+  const handleJoinRoom = (roomName: string, isSpectator: boolean) => {
     if (!socket) return;
-    socket.emit("joinRoom", roomName);
+    socket.emit("joinRoom", { roomName, isSpectator });
     setMainMenuState("waiting");
     clearError();
   };
@@ -86,8 +90,8 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
     idx: number
   ) => {
     if (!socket) return;
-    handlePickCoin(idx);
-    socket.emit("coinPicked", { coinPosition }); // Replace with actual coin position
+    removeCoin(idx);
+    socket.emit("coinPicked", { coinPosition });
   };
 
   useEffect(() => {
@@ -106,11 +110,20 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
     });
 
     const handleId = (id: string) => setId(id);
-    const handlePlayers = (props: Player[]) => {
-      setPlayers(props);
-      console.log(players);
+    const handlePlayers = (props: Player[]) => setPlayers(props);
+
+    const handleCreatedRoom = ({
+      room,
+      isSpectator,
+    }: {
+      room: string;
+      isSpectator: boolean;
+    }) => {
+      setIsSpectator(isSpectator);
+      setMainMenuState("create");
+      setPlayersCount(1);
+      setRoom(room);
     };
-    const handleCreatedRoom = (id: string) => setRoom(id);
 
     newSocket.on("coins", (coins: [number, number, number][]) => {
       setCoins(coins);
@@ -121,6 +134,15 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
     newSocket.on("players", handlePlayers);
     newSocket.on("created", handleCreatedRoom);
     newSocket.on("started", () => setGameState("playing"));
+    newSocket.on(
+      "joined",
+      ({ isSpectator, id }: { isSpectator: boolean; id: string }) => {
+        setId(id);
+        setIsSpectator(isSpectator);
+        setMainMenuState("waiting");
+        clearError();
+      }
+    );
     newSocket.on("roomDisconnected", () => {
       setRoom(null);
       setError("Room disconnected");

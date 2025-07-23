@@ -12,13 +12,14 @@ import { Environment, OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { useGameStates } from "./Context/GameStatesProvider";
 import Coins from "./components/Coins";
+import { LogOut } from "lucide-react";
 
 useGLTF.preload("./non.glb");
 
 function App() {
   const obj = useGLTF("./non.glb");
-  const { players, id } = useSocket();
-  const { gameState } = useGameStates();
+  const { players, id, handleLeaveRoom } = useSocket();
+  const { gameState, isSpectator } = useGameStates();
 
   return (
     <>
@@ -27,15 +28,17 @@ function App() {
       {gameState === "playing" && (
         <div className="score-board">
           {players.map((player) => {
+            console.log(player);
+            if (player.isSpectator) return;
             if (player.id === id)
               return (
-                <div className="item">
+                <div className="item" key={player.id}>
                   <div>You</div>
                   <div>{player.coins}</div>
                 </div>
               );
             return (
-              <div className="item">
+              <div className="item" key={player.id}>
                 <div>{player.id}</div>
                 <div>{player.coins}</div>
               </div>
@@ -44,13 +47,19 @@ function App() {
         </div>
       )}
 
+      {gameState === "playing" && (
+        <button className="in-game-leave-button" onClick={handleLeaveRoom}>
+          <LogOut size={25} />
+        </button>
+      )}
+
       <Canvas>
         <Environment preset="sunset" />
-        <OrbitControls />
+        {isSpectator && <OrbitControls />}
         <Physics gravity={[0, -90, 0]} timeStep="vary">
-          {gameState === "playing" && <CharacterController />}
+          {gameState === "playing" && !isSpectator && <CharacterController />}
           {players.map((player) => {
-            if (player.id !== id)
+            if (player.id !== id && !player.isSpectator)
               return (
                 <OtherPlayer
                   position={player.position}

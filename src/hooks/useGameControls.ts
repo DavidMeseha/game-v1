@@ -7,10 +7,10 @@ export const useGameControls = () => {
     {
       WALK_SPEED: { value: 25, min: 10, max: 25, step: 5 },
       ROTATION_SPEED: {
-        value: degToRad(1),
+        value: degToRad(2),
         min: degToRad(1),
-        max: degToRad(5),
-        step: degToRad(0.1),
+        max: degToRad(2),
+        step: degToRad(1),
       },
       CAMERA_TYPE: {
         options: {

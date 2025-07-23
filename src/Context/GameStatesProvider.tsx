@@ -14,6 +14,8 @@ type ProvidedValues = {
   setGameState: React.Dispatch<React.SetStateAction<GameStatus>>;
   playersCount: number;
   setPlayersCount: React.Dispatch<React.SetStateAction<number>>;
+  isSpectator: boolean;
+  setIsSpectator: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const GameStatesContext = createContext<ProvidedValues | null>(null);
@@ -24,6 +26,7 @@ export function GameStatesProvider({ children }: { children: ReactNode }) {
   const [isRuning, setIsRunning] = useState(false);
   const [gameState, setGameState] = useState<GameStatus>("prepering");
   const [playersCount, setPlayersCount] = useState(1);
+  const [isSpectator, setIsSpectator] = useState(false);
 
   return (
     <GameStatesContext.Provider
@@ -33,7 +36,9 @@ export function GameStatesProvider({ children }: { children: ReactNode }) {
         isRuning,
         gameState,
         playersCount,
+        isSpectator,
 
+        setIsSpectator,
         setPlayersCount,
         setGameState,
         setMainMenuState,

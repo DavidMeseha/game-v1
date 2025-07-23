@@ -94,7 +94,9 @@ input {
 }
 
 .menu-options {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  align-items: start;
   gap: 25px;
 }
 
@@ -129,6 +131,21 @@ input {
   display: flex;
   gap: 50px;
   padding: 5px 0;
+}
+
+.in-game-leave-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--destructive);
+  color: var(--primary-foreground);
+  position: fixed;
+  bottom: var(--gap);
+  left: var(--gap);
+  z-index: 99;
+  border-radius: 20px;
+  width: 40px;
+  height: 40px;
 }
 
 .error-text {

@@ -1,4 +1,4 @@
-import { JoystickIcon, Network } from "lucide-react";
+import { Eye, JoystickIcon, Network } from "lucide-react";
 import { useSocket } from "../Context/SocketProvider";
 import { useEffect, useRef } from "react";
 import { useGameStates } from "../Context/GameStatesProvider";
@@ -37,16 +37,22 @@ export default function InitGameMenu() {
       <h3 className="mt-1">Attache to a room</h3>
       <div className="initial-menu mt-1">
         {mainMenuState === "main" ? (
-          <div className="menu-options">
-            <button onClick={handleJoinClick}>
-              <JoystickIcon size={50} />
-              <p className="mt-1">Join Room</p>
-            </button>
-            <button onClick={handleCreateRoom}>
-              <Network size={50} />
-              <p className="mt-1">Create Room</p>
-            </button>
-          </div>
+          <>
+            <div className="menu-options">
+              <button onClick={handleJoinClick}>
+                <JoystickIcon size={50} />
+                <p className="mt-1">Join Room</p>
+              </button>
+              <button onClick={() => handleCreateRoom(false)}>
+                <Network size={50} />
+                <p className="mt-1">Create Room</p>
+              </button>
+              <button onClick={() => handleCreateRoom(true)}>
+                <Eye size={50} />
+                <p className="mt-1">Create Spectate</p>
+              </button>
+            </div>
+          </>
         ) : (
           <div className="flex-center flex-col mt-1">
             {mainMenuState === "create" && (
@@ -83,12 +89,20 @@ export default function InitGameMenu() {
                     Cancel
                   </button>
                   <button
-                    className="mt-1"
+                    className="mt-1 me-1"
                     onClick={() =>
-                      handleJoinRoom(inputRef.current?.value ?? "")
+                      handleJoinRoom(inputRef.current?.value ?? "", false)
                     }
                   >
                     Join
+                  </button>
+                  <button
+                    className="mt-1"
+                    onClick={() =>
+                      handleJoinRoom(inputRef.current?.value ?? "", true)
+                    }
+                  >
+                    Spectate
                   </button>
                 </div>
               </>
