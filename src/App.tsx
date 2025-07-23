@@ -23,34 +23,28 @@ function App() {
 
   return (
     <>
-      {isTouchScreen ? <TouchControls /> : <ControlsInstructions />}
-      {gameState !== "playing" && <InitGameMenu />}
-      {gameState === "playing" && (
-        <div className="score-board">
-          {players.map((player) => {
-            console.log(player);
-            if (player.isSpectator) return;
-            if (player.id === id)
+      {gameState === "playing" ? (
+        <>
+          <button className="in-game-leave-button" onClick={handleLeaveRoom}>
+            <LogOut size={25} />
+          </button>
+
+          {isTouchScreen ? <TouchControls /> : <ControlsInstructions />}
+
+          <div className="score-board">
+            {players.map((player) => {
+              if (player.isSpectator) return;
               return (
                 <div className="item" key={player.id}>
-                  <div>You</div>
+                  <div>{player.id === id && "You"}</div>
                   <div>{player.coins}</div>
                 </div>
               );
-            return (
-              <div className="item" key={player.id}>
-                <div>{player.id}</div>
-                <div>{player.coins}</div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {gameState === "playing" && (
-        <button className="in-game-leave-button" onClick={handleLeaveRoom}>
-          <LogOut size={25} />
-        </button>
+            })}
+          </div>
+        </>
+      ) : (
+        <InitGameMenu />
       )}
 
       <Canvas>
@@ -64,7 +58,7 @@ function App() {
                 <OtherPlayer
                   position={player.position}
                   rotation={player.rotation}
-                  name={player.id}
+                  name={player.name}
                   key={player.id}
                 />
               );

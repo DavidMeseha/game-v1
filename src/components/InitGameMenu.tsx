@@ -1,6 +1,6 @@
 import { Eye, JoystickIcon, Network } from "lucide-react";
 import { useSocket } from "../Context/SocketProvider";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from 'react';
 import { useGameStates } from "../Context/GameStatesProvider";
 
 export default function InitGameMenu() {
@@ -15,6 +15,7 @@ export default function InitGameMenu() {
   const { room, mainMenuState, setMainMenuState, playersCount } =
     useGameStates();
   const inputRef = useRef<HTMLInputElement>(null);
+  const [name, setName] = useState("");
 
   const handleJoinClick = () => {
     setMainMenuState("join");
@@ -43,11 +44,11 @@ export default function InitGameMenu() {
                 <JoystickIcon size={50} />
                 <p className="mt-1">Join Room</p>
               </button>
-              <button onClick={() => handleCreateRoom(false)}>
+              <button onClick={() => handleCreateRoom(false, name)}>
                 <Network size={50} />
                 <p className="mt-1">Create Room</p>
               </button>
-              <button onClick={() => handleCreateRoom(true)}>
+              <button onClick={() => handleCreateRoom(true, name)}>
                 <Eye size={50} />
                 <p className="mt-1">Create Spectate</p>
               </button>
@@ -91,7 +92,7 @@ export default function InitGameMenu() {
                   <button
                     className="mt-1 me-1"
                     onClick={() =>
-                      handleJoinRoom(inputRef.current?.value ?? "", false)
+                      handleJoinRoom(inputRef.current?.value ?? "", false, name)
                     }
                   >
                     Join
@@ -99,7 +100,7 @@ export default function InitGameMenu() {
                   <button
                     className="mt-1"
                     onClick={() =>
-                      handleJoinRoom(inputRef.current?.value ?? "", true)
+                      handleJoinRoom(inputRef.current?.value ?? "", true, name)
                     }
                   >
                     Spectate
@@ -113,6 +114,23 @@ export default function InitGameMenu() {
                 <p>Waiting for players to join...</p>
                 <button className="mt-1" onClick={handleRoomCancel}>
                   Cancel
+                </button>
+              </>
+            )}
+            {mainMenuState === "naming" && (
+              <>
+                <p>Your Name.</p>
+                <input
+                  type="text"
+                  value={name}
+                  className="w-auto text-center"
+                  onChange={(e) => setName(e.target.value)}
+                />
+                <button
+                  className="mt-1"
+                  onClick={() => setMainMenuState("main")}
+                >
+                  Proceed
                 </button>
               </>
             )}

@@ -1,6 +1,6 @@
 import { createContext, useContext, ReactNode, useState } from "react";
 
-type MenuStatus = "join" | "create" | "main" | "waiting";
+type MenuStatus = "naming" | "join" | "create" | "main" | "waiting";
 type GameStatus = "prepering" | "playing" | "ended";
 
 type ProvidedValues = {
@@ -22,7 +22,7 @@ const GameStatesContext = createContext<ProvidedValues | null>(null);
 
 export function GameStatesProvider({ children }: { children: ReactNode }) {
   const [room, setRoom] = useState<null | string>(null);
-  const [mainMenuState, setMainMenuState] = useState<MenuStatus>("main");
+  const [mainMenuState, setMainMenuState] = useState<MenuStatus>("naming");
   const [isRuning, setIsRunning] = useState(false);
   const [gameState, setGameState] = useState<GameStatus>("prepering");
   const [playersCount, setPlayersCount] = useState(1);

@@ -16,14 +16,19 @@ interface Player {
   position: [number, number, number];
   rotation: number;
   isSpectator: boolean;
+  name: string
 }
 
 interface SocketContextType {
   players: Player[];
   id: string;
   socket: Socket | undefined;
-  handleCreateRoom: (isSpectator: boolean) => void;
-  handleJoinRoom: (roomName: string, isSpectator: boolean) => void;
+  handleCreateRoom: (isSpectator: boolean, name: string) => void;
+  handleJoinRoom: (
+    roomName: string,
+    isSpectator: boolean,
+    name: string
+  ) => void;
   handleRoomCancel: () => void;
   handleStartGame: () => void;
   handleLeaveRoom: () => void;
@@ -35,10 +40,10 @@ interface SocketContextType {
 const SocketContext = createContext<SocketContextType | undefined>(undefined);
 
 export default function SocketProvider({ children }: { children: ReactNode }) {
+  const { setCoins, removeCoin } = useCoins();
   const [socket, setSocket] = useState<Socket | undefined>();
   const [players, setPlayers] = useState<Player[]>([]);
   const [id, setId] = useState<string>("");
-  const { setCoins, removeCoin } = useCoins();
   const [error, setError] = useState<IOError>();
   const {
     setRoom,
@@ -48,17 +53,21 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
     setIsSpectator,
   } = useGameStates();
 
-  const handleCreateRoom = (isSpectator: boolean) => {
+  const handleCreateRoom = (isSpectator: boolean, name: string) => {
+    console.log(name)
     if (!socket) return;
-    socket.emit("createRoom", { isSpectator });
+    socket.emit("createRoom", { isSpectator, name });
     clearError();
   };
 
-  const handleJoinRoom = (roomName: string, isSpectator: boolean) => {
+  const handleJoinRoom = (
+    roomName: string,
+    isSpectator: boolean,
+    name: string
+  ) => {
+    console.log(name)
     if (!socket) return;
-    socket.emit("joinRoom", { roomName, isSpectator });
-    setMainMenuState("waiting");
-    clearError();
+    socket.emit("joinRoom", { roomName, isSpectator, name });
   };
 
   const handleRoomCancel = () => {
