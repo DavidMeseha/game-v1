@@ -33,6 +33,10 @@ h3 {
   padding: 0;
 }
 
+*{
+  box-sizing: border-box;
+}
+
 button {
   background: var(--call-to-action);
   color: var(--call-to-action-foreground);
@@ -71,19 +75,17 @@ input {
 }
 
 .initial-screen {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   position: fixed;
   inset: 0;
   background-color: rgba(255, 255, 255, 0.9);
   z-index: 10;
   padding: 0 var(--gap);
+  padding-top: 100px;
   text-align: center;
 }
 
 .initial-menu {
+  margin: 0 auto;
   background-color: var(--primary);
   width: 100%;
   max-width: 500px;

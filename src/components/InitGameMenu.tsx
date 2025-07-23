@@ -1,6 +1,6 @@
 import { Eye, JoystickIcon, Network } from "lucide-react";
 import { useSocket } from "../Context/SocketProvider";
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 import { useGameStates } from "../Context/GameStatesProvider";
 
 export default function InitGameMenu() {
@@ -12,7 +12,7 @@ export default function InitGameMenu() {
     error,
     clearError,
   } = useSocket();
-  const { room, mainMenuState, setMainMenuState, playersCount } =
+  const { room, mainMenuState, setMainMenuState, playersCount, isLoading } =
     useGameStates();
   const inputRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState("");
@@ -56,82 +56,99 @@ export default function InitGameMenu() {
           </>
         ) : (
           <div className="flex-center flex-col mt-1">
-            {mainMenuState === "create" && (
+            {isLoading ? (
+              <p className="loading-text">{isLoading}</p>
+            ) : (
               <>
-                <p>{playersCount} players in room</p>
-                <h3>Room Joining Code.</h3>
-                <input
-                  type="text"
-                  ref={inputRef}
-                  className="w-auto text-center"
-                  onKeyDown={(e) => e.preventDefault()}
-                />
-                <div>
-                  <button className="mt-1 me-1" onClick={handleStartGame}>
-                    Start
-                  </button>
-                  <button className="mt-1" onClick={handleRoomCancel}>
-                    Cancel
-                  </button>
-                </div>
-              </>
-            )}
-            {mainMenuState === "join" && (
-              <>
-                <h3> Enter room code to join</h3>
-                <input
-                  type="text"
-                  ref={inputRef}
-                  className="w-auto text-center"
-                  onChange={clearError}
-                />
-                <div>
-                  <button className="mt-1 me-1" onClick={handleCancelJoining}>
-                    Cancel
-                  </button>
-                  <button
-                    className="mt-1 me-1"
-                    onClick={() =>
-                      handleJoinRoom(inputRef.current?.value ?? "", false, name)
-                    }
-                  >
-                    Join
-                  </button>
-                  <button
-                    className="mt-1"
-                    onClick={() =>
-                      handleJoinRoom(inputRef.current?.value ?? "", true, name)
-                    }
-                  >
-                    Spectate
-                  </button>
-                </div>
-              </>
-            )}
-            {mainMenuState === "waiting" && (
-              <>
-                <p>{playersCount} players in room</p>
-                <p>Waiting for players to join...</p>
-                <button className="mt-1" onClick={handleRoomCancel}>
-                  Cancel
-                </button>
-              </>
-            )}
-            {mainMenuState === "naming" && (
-              <>
-                <p>Your Name.</p>
-                <input
-                  type="text"
-                  value={name}
-                  className="w-auto text-center"
-                  onChange={(e) => setName(e.target.value)}
-                />
-                <button
-                  className="mt-1"
-                  onClick={() => setMainMenuState("main")}
-                >
-                  Proceed
-                </button>
+                {mainMenuState === "create" && (
+                  <>
+                    <p>{playersCount} players in room</p>
+                    <h3>Room Joining Code.</h3>
+                    <input
+                      type="text"
+                      ref={inputRef}
+                      className="w-auto text-center"
+                      onKeyDown={(e) => e.preventDefault()}
+                    />
+                    <div>
+                      <button className="mt-1 me-1" onClick={handleStartGame}>
+                        Start
+                      </button>
+                      <button className="mt-1" onClick={handleRoomCancel}>
+                        Cancel
+                      </button>
+                    </div>
+                  </>
+                )}
+                {mainMenuState === "join" && (
+                  <>
+                    <h3> Enter room code to join</h3>
+                    <input
+                      type="text"
+                      ref={inputRef}
+                      className="w-auto text-center"
+                      onChange={clearError}
+                    />
+                    <div>
+                      <button
+                        className="mt-1 me-1"
+                        onClick={handleCancelJoining}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        className="mt-1 me-1"
+                        onClick={() =>
+                          handleJoinRoom(
+                            inputRef.current?.value ?? "",
+                            false,
+                            name
+                          )
+                        }
+                      >
+                        Join
+                      </button>
+                      <button
+                        className="mt-1"
+                        onClick={() =>
+                          handleJoinRoom(
+                            inputRef.current?.value ?? "",
+                            true,
+                            name
+                          )
+                        }
+                      >
+                        Spectate
+                      </button>
+                    </div>
+                  </>
+                )}
+                {mainMenuState === "waiting" && (
+                  <>
+                    <p>{playersCount} players in room</p>
+                    <p>Waiting for players to join...</p>
+                    <button className="mt-1" onClick={handleRoomCancel}>
+                      Cancel
+                    </button>
+                  </>
+                )}
+                {mainMenuState === "naming" && (
+                  <>
+                    <p>Your Name.</p>
+                    <input
+                      type="text"
+                      value={name}
+                      className="w-auto text-center"
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                    <button
+                      className="mt-1"
+                      onClick={() => setMainMenuState("main")}
+                    >
+                      Proceed
+                    </button>
+                  </>
+                )}
               </>
             )}
           </div>

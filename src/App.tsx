@@ -36,7 +36,7 @@ function App() {
               if (player.isSpectator) return;
               return (
                 <div className="item" key={player.id}>
-                  <div>{player.id === id && "You"}</div>
+                  <div>{player.id === id ? "You" : player.name}</div>
                   <div>{player.coins}</div>
                 </div>
               );

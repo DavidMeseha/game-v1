@@ -16,7 +16,7 @@ interface Player {
   position: [number, number, number];
   rotation: number;
   isSpectator: boolean;
-  name: string
+  name: string;
 }
 
 interface SocketContextType {
@@ -51,11 +51,13 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
     setGameState,
     setPlayersCount,
     setIsSpectator,
+    setIsLoading,
+    isLoading,
   } = useGameStates();
 
   const handleCreateRoom = (isSpectator: boolean, name: string) => {
-    console.log(name)
-    if (!socket) return;
+    if (!socket || isLoading) return;
+    setIsLoading("Creating room...");
     socket.emit("createRoom", { isSpectator, name });
     clearError();
   };
@@ -65,8 +67,8 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
     isSpectator: boolean,
     name: string
   ) => {
-    console.log(name)
-    if (!socket) return;
+    if (!socket || isLoading) return;
+    setIsLoading("Joining room...");
     socket.emit("joinRoom", { roomName, isSpectator, name });
   };
 
@@ -128,6 +130,7 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
       room: string;
       isSpectator: boolean;
     }) => {
+      setIsLoading(null);
       setIsSpectator(isSpectator);
       setMainMenuState("create");
       setPlayersCount(1);
@@ -138,7 +141,10 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
       setCoins(coins);
     });
     newSocket.on("connect", () => {});
-    newSocket.on("error", (err: string) => setError(err));
+    newSocket.on("error", (err: string) => {
+      setError(err);
+      setIsLoading(null);
+    });
     newSocket.on("id", handleId);
     newSocket.on("players", handlePlayers);
     newSocket.on("created", handleCreatedRoom);
@@ -146,6 +152,7 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
     newSocket.on(
       "joined",
       ({ isSpectator, id }: { isSpectator: boolean; id: string }) => {
+        setIsLoading(null);
         setId(id);
         setIsSpectator(isSpectator);
         setMainMenuState("waiting");
