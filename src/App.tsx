@@ -4,7 +4,7 @@ import { CharacterController } from "./components/CharacterController";
 import { useSocket } from "./Context/SocketProvider";
 import OtherPlayer from "./components/OtherPlayer";
 import ControlsInstructions from "./components/ControlsInstructions";
-import InitGameMenu from "./components/InitGameMenu";
+import InitGameMenu from "./components/mainMenu/InitGameMenu";
 import { isTouchScreen } from "./utils/isTouchSceen";
 import { Physics } from "@react-three/rapier";
 import TouchControls from "./components/TouchControls";
