@@ -8,6 +8,7 @@ export default function JoinRoomForm() {
     setIsLoading,
     setIsSpectator,
     setId,
+    setRoom,
     clearError,
     name,
   } = useGameStates();
@@ -33,6 +34,7 @@ export default function JoinRoomForm() {
       ({
         isSpectator,
         id,
+        roomId,
       }: {
         isSpectator: boolean;
         id: string;
@@ -40,6 +42,7 @@ export default function JoinRoomForm() {
       }) => {
         setIsLoading(null);
         setId(id);
+        setRoom(roomId);
         setIsSpectator(isSpectator);
         setMainMenuState("waiting");
         clearError();
