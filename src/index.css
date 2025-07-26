@@ -117,6 +117,18 @@ input {
   background-color: rgb(0, 0, 201);
 }
 
+.code-display-area {
+  position: relative;
+}
+
+.copy-icon {
+  position: absolute;
+  right: 15px;
+  top: 12px;
+  padding-left: 0px;
+  cursor: pointer;
+}
+
 .score-board {
   position: fixed;
   bottom: var(--gap);
