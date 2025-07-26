@@ -1,7 +1,8 @@
 import { Joystick } from "react-joystick-component";
 import styled from "styled-components";
 import { IJoystickUpdateEvent } from "react-joystick-component/build/lib/Joystick";
-import { useControls } from "../Context/ControlsProvider";
+import { useControls } from "../../Context/ControlsProvider";
+import { analogState } from "../../constants";
 
 const JoystickContainer = styled.div`
   position: fixed;
@@ -17,10 +18,13 @@ export default function TouchControls() {
   const handleMove = (e: IJoystickUpdateEvent) => {
     if (!e.x || !e.y) return;
 
-    updateControl("up", e.y > 0.3);
-    updateControl("down", e.y < -0.3);
-    updateControl("left", e.x < -0.3);
-    updateControl("right", e.x > 0.3);
+    updateControl("up", e.y > 0.01);
+    updateControl("down", e.y < -0.01);
+    updateControl("left", e.x < 0.01);
+    updateControl("right", e.x > -0.01);
+
+    analogState.x = e.x;
+    analogState.z = e.y;
   };
 
   const handleStop = () => {

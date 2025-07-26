@@ -1,4 +1,11 @@
-import { createContext, useContext, ReactNode, useState } from "react";
+import {
+  createContext,
+  useContext,
+  ReactNode,
+  useState,
+  useEffect,
+} from "react";
+import socketService from "../services/socket";
 
 type ProvidedValues = {
   coins: [number, number, number][];
@@ -17,6 +24,14 @@ export default function CoinsProvider({ children }: { children: ReactNode }) {
       return newCoins;
     });
   };
+
+  useEffect(() => {
+    socketService.on("coins", setCoins);
+
+    return () => {
+      socketService.off("coins", setCoins);
+    };
+  }, []);
 
   return (
     <CoinsContext.Provider value={{ coins, removeCoin, setCoins }}>

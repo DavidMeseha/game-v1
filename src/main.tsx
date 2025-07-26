@@ -1,13 +1,13 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import App from "./App";
-import InitLayout from "./InitLayout";
+import GameEntryPoint from "./GameEntryPoint";
+import ProvidersLayout from "./Context/ProvidersLayout";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <InitLayout>
-      <App />
-    </InitLayout>
+    <ProvidersLayout>
+      <GameEntryPoint />
+    </ProvidersLayout>
   </StrictMode>
 );

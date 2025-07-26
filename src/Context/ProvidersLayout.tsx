@@ -1,14 +1,11 @@
 import { ReactNode, useEffect, useMemo, useRef } from "react";
-import { Controls } from "./constants";
-
-import SocketProvider from "./Context/SocketProvider";
-import { ControlsProvider } from "./Context/ControlsProvider";
-
-import { GameStatesProvider } from "./Context/GameStatesProvider";
+import { Controls } from "../constants";
+import { ControlsProvider } from "./ControlsProvider";
+import { GameStatesProvider } from "./GameStatesProvider";
 import { KeyboardControls } from "@react-three/drei";
-import CoinsProvider from "./Context/CoinsProvider";
+import CoinsProvider from "./CoinsProvider";
 
-function InitLayout({ children }: { children: ReactNode }) {
+export default function ProvidersLayout({ children }: { children: ReactNode }) {
   const canvasRef = useRef<HTMLDivElement>(null);
 
   const map = useMemo(
@@ -37,19 +34,16 @@ function InitLayout({ children }: { children: ReactNode }) {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
   return (
-    <div ref={canvasRef} style={{ width: "100vw", height: "100vh" }}>
+    <main ref={canvasRef} style={{ width: "100vw", height: "100vh" }}>
       <GameStatesProvider>
         <CoinsProvider>
-          <SocketProvider>
-            <KeyboardControls map={map}>
-              <ControlsProvider>{children}</ControlsProvider>
-            </KeyboardControls>
-          </SocketProvider>
+          <KeyboardControls map={map}>
+            <ControlsProvider>{children}</ControlsProvider>
+          </KeyboardControls>
         </CoinsProvider>
       </GameStatesProvider>
-    </div>
+    </main>
   );
 }
-
-export default InitLayout;

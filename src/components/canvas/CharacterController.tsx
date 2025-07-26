@@ -6,14 +6,16 @@ import {
 } from "@react-three/rapier";
 import { MathUtils } from "three";
 import { useEffect, useRef, useState } from "react";
-import { gravity } from "../constants";
-import { useGameControls } from "../hooks/useGameControls";
+import { analogState, gravity } from "../../constants";
 import { CharacterGroup } from "./CharacterGroup";
-import { lerpAngle } from "../utils/characterUtils";
+import { lerpAngle } from "../../utils/characterUtils";
 import * as THREE from "three";
-import { useSocket } from "../Context/SocketProvider";
-import { useControls } from "../Context/ControlsProvider";
-import { useCoins } from "../Context/CoinsProvider";
+import { useControls } from "../../Context/ControlsProvider";
+import { useCoins } from "../../Context/CoinsProvider";
+import socketService from "../../services/socket";
+import { degToRad } from "three/src/math/MathUtils.js";
+// import { isTouchScreen } from "../../utils/isTouchSceen";
+// import { useGameControls } from "../../hooks/useGameControls";
 
 export interface CharacterMovement {
   x: number;
@@ -21,10 +23,14 @@ export interface CharacterMovement {
 }
 
 export const CharacterController = () => {
-  const { socket, handleCoinPick } = useSocket();
-  const { WALK_SPEED, ROTATION_SPEED, CAMERA_TYPE } = useGameControls();
+  // const { WALK_SPEED, ROTATION_SPEED, CAMERA_TYPE } = useGameControls();
+  const { WALK_SPEED, ROTATION_SPEED, CAMERA_TYPE } = {
+    WALK_SPEED: 20,
+    ROTATION_SPEED: degToRad(2),
+    CAMERA_TYPE: -8,
+  };
   const { controls } = useControls();
-  const { coins } = useCoins();
+  const { coins, removeCoin } = useCoins();
 
   const rb = useRef<RapierRigidBody>(null);
   const container = useRef<THREE.Group>(null);
@@ -68,26 +74,28 @@ export const CharacterController = () => {
     }
   };
 
-  const calculateMovement = (mouse: {
-    x: number;
-    y: number;
-  }): CharacterMovement => {
+  const handleCoinPick = (
+    coinPosition: [number, number, number],
+    idx: number
+  ) => {
+    removeCoin(idx);
+    socketService.emitCoinPick({ coinPosition });
+  };
+
+  const calculateMovement = (): CharacterMovement => {
     const movement = { x: 0, z: 0 };
 
-    if (controls.up) movement.z = 1;
-    if (controls.down) movement.z = -1;
-    if (controls.left) movement.x = 1;
-    if (controls.right) movement.x = -1;
+    if (controls.up) movement.z = Math.abs(analogState.z) * 1;
+    if (controls.down) movement.z = Math.abs(analogState.z) * -1;
+    if (controls.left) movement.x = Math.abs(analogState.x) * 1;
+    if (controls.right) movement.x = Math.abs(analogState.x) * -1;
 
-    if (isClicking.current) {
-      if (Math.abs(mouse.x) > 0.1) movement.x = -mouse.x;
-      movement.z = mouse.y + 0.4;
-    }
+    console.log(analogState);
 
     return movement;
   };
 
-  useFrame(({ camera, mouse }) => {
+  useFrame(({ camera }) => {
     if (
       !character.current ||
       !container.current ||
@@ -100,7 +108,7 @@ export const CharacterController = () => {
       handleJumpPhysics();
     }
 
-    const movement = calculateMovement(mouse);
+    const movement = calculateMovement();
     const vel = rb.current.linvel();
 
     // Handle rotation and movement
@@ -148,7 +156,7 @@ export const CharacterController = () => {
       camera.lookAt(vectors.current.cameraLookAt);
     }
 
-    const position = [
+    const position: [number, number, number] = [
       vectors.current.v3.x,
       vectors.current.v3.y,
       vectors.current.v3.z,
@@ -158,14 +166,11 @@ export const CharacterController = () => {
       if (
         Math.abs(coin[0] - position[0]) < 5 &&
         Math.abs(coin[2] - position[2]) < 5
-      ) {
-        console.log("Coin picked:", coin);
+      )
         handleCoinPick(coin, idx);
-      }
     });
 
     // Emit position updates
-    if (!socket) return;
     if (
       controls.up ||
       controls.down ||
@@ -175,7 +180,7 @@ export const CharacterController = () => {
       isClicking.current
     ) {
       container.current.getWorldPosition(vectors.current.v3);
-      socket.emit("move", {
+      socketService.emitPlayerMove({
         position,
         rotation: container.current.rotation.y,
       });

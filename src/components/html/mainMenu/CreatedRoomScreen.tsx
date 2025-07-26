@@ -1,17 +1,30 @@
 import { useEffect, useRef } from "react";
-import { useGameStates } from "../../Context/GameStatesProvider";
-import { useSocket } from "../../Context/SocketProvider";
+import { useGameStates } from "../../../Context/GameStatesProvider";
+import socketService from "../../../services/socket";
 
 export default function CreatedRoomScreen() {
-  const { handleRoomCancel, handleStartGame } = useSocket();
-  const { playersCount, room, mainMenuState } = useGameStates();
+  const {
+    playersCount,
+    room,
+    setMainMenuState,
+    setRoom,
+    setPlayersCount,
+    clearError,
+  } = useGameStates();
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (mainMenuState === "create" && inputRef.current && room)
-      inputRef.current.value = room;
-  }, [mainMenuState, room]);
+    if (inputRef.current && room) inputRef.current.value = room;
+  }, [room]);
 
+  const handleStartGame = () => socketService.emitStartGame();
+  const handleRoomCancel = () => {
+    socketService.emitCancelRoom();
+    setMainMenuState("main");
+    setRoom("");
+    clearError();
+    setPlayersCount(1);
+  };
   return (
     <>
       <p>{playersCount} players in room</p>

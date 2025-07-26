@@ -1,5 +1,5 @@
-import Coin from "../components/Coin";
-import { useCoins } from "../Context/CoinsProvider";
+import Coin from "./Coin";
+import { useCoins } from "../../Context/CoinsProvider";
 // import { useCoinControlDev } from "../hooks/useCoinControlDev";
 
 // type Props = {};
