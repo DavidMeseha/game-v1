@@ -1,50 +1,77 @@
-# React + TypeScript + Vite
+# 3D Coin Collector Game
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A real-time multiplayer 3D game where players compete to collect coins in a shared environment. Built with **Three.js** for immersive 3D graphics and **Socket.IO** for fast, reliable networking.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Room Management:**  
+  Create and join game rooms for private or public matches.
 
-## Expanding the ESLint configuration
+- **Spectator Mode:**  
+  Join any room as a spectator and watch the action live.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **Real-Time Multiplayer:**  
+  Player movements, coin pickups, and game events are synced instantly across all clients.
 
-- Configure the top-level `parserOptions` property like this:
+- **Reconnect on Connection Error:**  
+  Automatic reconnection lets players resume their session if their connection drops.
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+- **Analog Movement for Mobile:**  
+  Smooth analog controls for mobile devices, including rotation and movement.
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+- **3D Environment:**  
+  Built with Three.js for realistic graphics and interactive gameplay.
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+## Getting Started
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+1. **Install dependencies:**
+
+   ```
+   npm install
+   ```
+
+2. **Start the backend server:**  
+   The backend Node.js code is available at:  
+   [Backend Repository](https://github.com/DavidMeseha/Game-v1-server)  
+   For the full experience, clone and install the backend:
+
+   ```
+   npm install
+   npm run dev
+   ```
+
+3. **Start the client:**
+
+   ```
+   npm run dev
+   ```
+
+4. **Open your browser:**  
+   Visit `http://localhost:3000` to play.
+
+## How to Play
+
+- **Enter Your Name:**  
+  Write a name that will represent you on players screen.
+
+- **Create a Room:**  
+  Start a new game and invite friends.
+
+- **Join a Room:**  
+  Enter a room code to join an existing match.
+
+- **Spectate:**  
+  Watch games in progress without participating.
+
+- **Collect Coins:**  
+  Move your character to pick up coins and score points.
+
+- **Mobile Controls:**  
+  Use the on-screen analog stick for movement and rotation.
+
+## Technologies Used
+
+- [Three.js](https://threejs.org/) – 3D rendering
+- [Socket.IO](https://socket.io/) – Real-time networking
+- React – UI framework
+- Node.js – Backend server
