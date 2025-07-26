@@ -73,5 +73,7 @@ A real-time multiplayer 3D game where players compete to collect coins in a shar
 
 - [Three.js](https://threejs.org/) – 3D rendering
 - [Socket.IO](https://socket.io/) – Real-time networking
+- [Blender](https://www.blender.org/) – 3D designe tool
 - React – UI framework
 - Node.js – Backend server
+- Blender - To creat .GLTF map
