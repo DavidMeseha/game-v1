@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useGameStates } from "../../../Context/GameStatesProvider";
 import socketService from "../../../services/socket";
 import { Check, Copy } from "lucide-react";
@@ -12,12 +12,7 @@ export default function CreatedRoomScreen() {
     setPlayersCount,
     clearError,
   } = useGameStates();
-  const inputRef = useRef<HTMLInputElement>(null);
   const [coppied, setCopy] = useState(false);
-
-  useEffect(() => {
-    if (inputRef.current && room) inputRef.current.value = room;
-  }, [room]);
 
   const handleStartGame = () => socketService.emitStartGame();
   const handleRoomCancel = () => {
@@ -46,7 +41,7 @@ export default function CreatedRoomScreen() {
       <div className="code-display-area">
         <input
           type="text"
-          ref={inputRef}
+          value={room}
           className="w-full text-center"
           onKeyDown={(e) => e.preventDefault()}
         />
