@@ -9,7 +9,7 @@ export const Controls = {
 
 export const gravity = -9.81;
 
-export const analogState = {
+export const analogState: { x: number; z: number } = {
   x: 0.7,
   z: 0.7,
 };

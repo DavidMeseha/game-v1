@@ -18,7 +18,7 @@ export const CharacterGroup = forwardRef(
           {name && (
             <Billboard>
               <Text
-                position={[0, 8, 0]}
+                position={[0, 4, 0]}
                 fontSize={1}
                 color="#fff"
                 anchorX="center"

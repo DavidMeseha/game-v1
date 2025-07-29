@@ -12,8 +12,22 @@ const JoystickContainer = styled.div`
   touch-action: none;
 `;
 
+const JumbButton = styled.button`
+  background-color: black;
+  color: white;
+  opacity: 0.4;
+  position: fixed;
+  bottom: 75px;
+  right: 40px;
+  z-index: 1000;
+  touch-action: none;
+  padding: 5px 10px;
+  font-size: basic;
+  border-radius: 90px;
+`;
+
 export default function TouchControls() {
-  const { updateControl } = useControls();
+  const { updateControl, controls } = useControls();
 
   const handleMove = (e: IJoystickUpdateEvent) => {
     if (!e.x || !e.y) return;
@@ -22,6 +36,7 @@ export default function TouchControls() {
     updateControl("down", e.y < -0.01);
     updateControl("left", e.x < 0.01);
     updateControl("right", e.x > -0.01);
+    if (controls.jump) updateControl("jump", true);
 
     analogState.x = e.x;
     analogState.z = e.y;
@@ -32,17 +47,25 @@ export default function TouchControls() {
     updateControl("down", false);
     updateControl("left", false);
     updateControl("right", false);
+    if (controls.jump) updateControl("jump", true);
+  };
+
+  const handleJumb = () => {
+    updateControl("jump", true);
   };
 
   return (
-    <JoystickContainer>
-      <Joystick
-        size={100}
-        baseColor="rgba(255, 255, 255, 0.2)"
-        stickColor="rgba(255, 255, 255, 0.8)"
-        move={handleMove}
-        stop={handleStop}
-      />
-    </JoystickContainer>
+    <>
+      <JumbButton onClick={handleJumb}>Jump</JumbButton>
+      <JoystickContainer>
+        <Joystick
+          size={100}
+          baseColor="rgba(255, 255, 255, 0.2)"
+          stickColor="rgba(255, 255, 255, 0.8)"
+          move={handleMove}
+          stop={handleStop}
+        />
+      </JoystickContainer>
+    </>
   );
 }

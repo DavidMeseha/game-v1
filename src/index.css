@@ -131,14 +131,14 @@ input {
 
 .score-board {
   position: fixed;
-  bottom: var(--gap);
+  top: var(--gap);
   right: var(--gap);
   font-size: x-small;
   z-index: 99;
   background-color: var(--foreground);
   color: var(--primary-foreground);
   padding: 5px 10px;
-  opacity: 0.4;
+  opacity: 0.2;
 }
 
 .score-board .item {

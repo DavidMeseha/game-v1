@@ -14,6 +14,7 @@ import { useControls } from "../../Context/ControlsProvider";
 import { useCoins } from "../../Context/CoinsProvider";
 import socketService from "../../services/socket";
 import { degToRad } from "three/src/math/MathUtils.js";
+import isNearXZ from "../../utils/isNear";
 // import { isTouchScreen } from "../../utils/isTouchSceen";
 // import { useGameControls } from "../../hooks/useGameControls";
 
@@ -29,7 +30,7 @@ export const CharacterController = () => {
     ROTATION_SPEED: degToRad(2),
     CAMERA_TYPE: -8,
   };
-  const { controls } = useControls();
+  const { controls, updateControl } = useControls();
   const { coins, removeCoin } = useCoins();
 
   const rb = useRef<RapierRigidBody>(null);
@@ -47,7 +48,7 @@ export const CharacterController = () => {
   const characterRotationTarget = useRef(0);
   const rotationTarget = useRef(0);
   const isClicking = useRef(false);
-  const velocity = useRef(5);
+  const velocity = useRef(10);
   const [isJumping, setIsJumping] = useState(false);
 
   useEffect(() => {
@@ -70,7 +71,8 @@ export const CharacterController = () => {
     if (container.current.position.y <= 0) {
       container.current.position.y = 0;
       setIsJumping(false);
-      velocity.current = 5;
+      updateControl("jump", false);
+      velocity.current = 10;
     }
   };
 
@@ -102,10 +104,7 @@ export const CharacterController = () => {
     )
       return;
 
-    if (controls.jump || isJumping) {
-      handleJumpPhysics();
-    }
-
+    if (controls.jump || isJumping) handleJumpPhysics();
     const movement = calculateMovement();
     const vel = rb.current.linvel();
 
@@ -116,7 +115,7 @@ export const CharacterController = () => {
 
     if (movement.x !== 0 || movement.z !== 0) {
       characterRotationTarget.current =
-        Math.atan2(movement.x, movement.z) * 0.5;
+        Math.atan2(movement.x, movement.z) * 0.3;
       character.current.rotation.y = lerpAngle(
         character.current.rotation.y,
         characterRotationTarget.current,
@@ -136,7 +135,7 @@ export const CharacterController = () => {
     container.current.rotation.y = MathUtils.lerp(
       container.current.rotation.y,
       rotationTarget.current,
-      0.8
+      0.1
     );
 
     cameraPosition.current.getWorldPosition(
@@ -154,7 +153,7 @@ export const CharacterController = () => {
       );
       vectors.current.cameraLookAt.lerp(
         vectors.current.cameraLookAtWorldPosition,
-        0.8
+        0.1
       );
       camera.lookAt(vectors.current.cameraLookAt);
     }
@@ -166,11 +165,7 @@ export const CharacterController = () => {
     ];
 
     coins.forEach((coin, idx) => {
-      if (
-        Math.abs(coin[0] - position[0]) < 5 &&
-        Math.abs(coin[2] - position[2]) < 5
-      )
-        handleCoinPick(coin, idx);
+      if (isNearXZ(coin, position)) handleCoinPick(coin, idx);
     });
 
     // Emit position updates
