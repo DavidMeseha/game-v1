@@ -27,7 +27,7 @@ const JumbButton = styled.button`
 `;
 
 export default function TouchControls() {
-  const { updateControl, controls } = useControls();
+  const { updateControl } = useControls();
 
   const handleMove = (e: IJoystickUpdateEvent) => {
     if (!e.x || !e.y) return;
@@ -36,7 +36,6 @@ export default function TouchControls() {
     updateControl("down", e.y < -0.01);
     updateControl("left", e.x < 0.01);
     updateControl("right", e.x > -0.01);
-    if (controls.jump) updateControl("jump", true);
 
     analogState.x = e.x;
     analogState.z = e.y;
@@ -47,16 +46,21 @@ export default function TouchControls() {
     updateControl("down", false);
     updateControl("left", false);
     updateControl("right", false);
-    if (controls.jump) updateControl("jump", true);
   };
 
-  const handleJumb = () => {
+  const handleJump = () => {
     updateControl("jump", true);
   };
 
   return (
     <>
-      <JumbButton onClick={handleJumb}>Jump</JumbButton>
+      <JumbButton
+        onClick={handleJump}
+        onTouchStart={handleJump}
+        onTouchEnd={(e) => e.preventDefault()}
+      >
+        Jump
+      </JumbButton>
       <JoystickContainer>
         <Joystick
           size={100}
