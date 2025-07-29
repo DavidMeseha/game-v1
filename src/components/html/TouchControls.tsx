@@ -2,7 +2,7 @@ import { Joystick } from "react-joystick-component";
 import styled from "styled-components";
 import { IJoystickUpdateEvent } from "react-joystick-component/build/lib/Joystick";
 import { useControls } from "../../Context/ControlsProvider";
-import { analogState, jumping, setJumping } from "../../constants";
+import { analogState, setJumping } from "../../constants";
 
 const JoystickContainer = styled.div`
   position: fixed;
