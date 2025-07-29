@@ -90,8 +90,6 @@ export const CharacterController = () => {
     if (controls.left) movement.x = Math.abs(analogState.x) * 1;
     if (controls.right) movement.x = Math.abs(analogState.x) * -1;
 
-    console.log(analogState);
-
     return movement;
   };
 
@@ -117,7 +115,8 @@ export const CharacterController = () => {
     }
 
     if (movement.x !== 0 || movement.z !== 0) {
-      characterRotationTarget.current = Math.atan2(movement.x, movement.z);
+      characterRotationTarget.current =
+        Math.atan2(movement.x, movement.z) * 0.5;
       character.current.rotation.y = lerpAngle(
         character.current.rotation.y,
         characterRotationTarget.current,
@@ -137,13 +136,17 @@ export const CharacterController = () => {
     container.current.rotation.y = MathUtils.lerp(
       container.current.rotation.y,
       rotationTarget.current,
-      0.1
+      0.8
     );
 
     cameraPosition.current.getWorldPosition(
       vectors.current.cameraWorldPosition
     );
-    camera.position.lerp(vectors.current.cameraWorldPosition, 0.1);
+    camera.position.set(
+      vectors.current.cameraWorldPosition.x,
+      vectors.current.cameraWorldPosition.y,
+      vectors.current.cameraWorldPosition.z
+    );
 
     if (cameraTarget.current) {
       cameraTarget.current.getWorldPosition(
@@ -151,7 +154,7 @@ export const CharacterController = () => {
       );
       vectors.current.cameraLookAt.lerp(
         vectors.current.cameraLookAtWorldPosition,
-        0.1
+        0.8
       );
       camera.lookAt(vectors.current.cameraLookAt);
     }
@@ -193,12 +196,12 @@ export const CharacterController = () => {
         <group ref={cameraTarget} position-z={20} />
         <group
           ref={cameraPosition}
-          position-y={8}
+          position-y={14}
           position-z={CAMERA_TYPE ?? 3}
         />
         <CharacterGroup ref={character} color="white" />
       </group>
-      <CuboidCollider args={[4, 0, 4]} />
+      <CuboidCollider args={[2, 0, 2]} />
     </RigidBody>
   );
 };

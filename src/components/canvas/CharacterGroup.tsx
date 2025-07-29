@@ -11,7 +11,7 @@ export const CharacterGroup = forwardRef(
       <>
         <group ref={ref}>
           <mesh>
-            <boxGeometry args={[4, 12, 4]} />
+            <boxGeometry args={[4, 6, 3]} />
             <meshStandardMaterial color={color} />
           </mesh>
 
