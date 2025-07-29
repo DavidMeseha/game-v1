@@ -13,3 +13,9 @@ export const analogState: { x: number; z: number } = {
   x: 0.7,
   z: 0.7,
 };
+
+export let jumping = false;
+
+export function setJumping(state: boolean) {
+  jumping = state;
+}

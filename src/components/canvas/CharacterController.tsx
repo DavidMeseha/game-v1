@@ -5,8 +5,8 @@ import {
   RigidBody,
 } from "@react-three/rapier";
 import { MathUtils } from "three";
-import { useEffect, useRef, useState } from "react";
-import { analogState, gravity } from "../../constants";
+import { useEffect, useRef } from "react";
+import { analogState, gravity, jumping, setJumping } from "../../constants";
 import { CharacterGroup } from "./CharacterGroup";
 import { lerpAngle } from "../../utils/characterUtils";
 import * as THREE from "three";
@@ -49,18 +49,17 @@ export const CharacterController = () => {
   const rotationTarget = useRef(0);
   const isClicking = useRef(false);
   const velocity = useRef(10);
-  const [isJumping, setIsJumping] = useState(false);
 
   useEffect(() => {
     const handleJump = (e: KeyboardEvent) => {
-      if (e.code === "Space" && !isJumping) {
-        setIsJumping(true);
+      if (e.code === "Space" && !jumping) {
+        setJumping(true);
       }
     };
 
     window.addEventListener("keydown", handleJump);
     return () => window.removeEventListener("keydown", handleJump);
-  }, [isJumping]);
+  }, [jumping]);
 
   const handleJumpPhysics = () => {
     if (!container.current) return;
@@ -70,7 +69,7 @@ export const CharacterController = () => {
 
     if (container.current.position.y <= 0) {
       container.current.position.y = 0;
-      setIsJumping(false);
+      setJumping(false);
       updateControl("jump", false);
       velocity.current = 10;
     }
@@ -104,7 +103,7 @@ export const CharacterController = () => {
     )
       return;
 
-    if (controls.jump || isJumping) handleJumpPhysics();
+    if (controls.jump || jumping) handleJumpPhysics();
     const movement = calculateMovement();
     const vel = rb.current.linvel();
 
@@ -174,7 +173,7 @@ export const CharacterController = () => {
       controls.down ||
       controls.right ||
       controls.left ||
-      isJumping ||
+      jumping ||
       isClicking.current
     ) {
       container.current.getWorldPosition(vectors.current.v3);

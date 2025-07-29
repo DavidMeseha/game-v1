@@ -2,7 +2,7 @@ import { Joystick } from "react-joystick-component";
 import styled from "styled-components";
 import { IJoystickUpdateEvent } from "react-joystick-component/build/lib/Joystick";
 import { useControls } from "../../Context/ControlsProvider";
-import { analogState } from "../../constants";
+import { analogState, jumping, setJumping } from "../../constants";
 
 const JoystickContainer = styled.div`
   position: fixed;
@@ -49,7 +49,7 @@ export default function TouchControls() {
   };
 
   const handleJump = () => {
-    updateControl("jump", true);
+    setJumping(true);
   };
 
   return (
